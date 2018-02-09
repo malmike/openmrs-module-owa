@@ -49,7 +49,7 @@ public class OwaFilter implements Filter {
 			requestURL = request.getServletPath();
 		}
 		
-		if (Context.isAuthenticated()) {
+		if (confirmRequestUrl(requestURL) || Context.isAuthenticated()) {
 			if (requestURL.startsWith(owaBasePath)) {
 				String newURL = requestURL.replace(owaBasePath, "/ms/owa/fileServlet");
 				req.getRequestDispatcher(newURL).forward(req, res);
@@ -64,6 +64,13 @@ public class OwaFilter implements Filter {
 				chain.doFilter(req, res);
 			}
 		}
+	}
+	
+	private boolean confirmRequestUrl(String requestURL) {
+		if (requestURL.contains("addonmanager")) {
+			return true;
+		}
+		return false;
 	}
 	
 	//owaBasePath can be either full path (must contain protocol) or relative servlet path
